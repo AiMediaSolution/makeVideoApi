@@ -7,7 +7,7 @@ const http = require("http");
 const { wss } = require("./webSocketServer");
 
 const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 // initialize DataBase
 initializeDatabase();
