@@ -54,10 +54,14 @@ function addDataVideo(id_data, title, video_id, video_url, callback) {
     callback
   );
 }
+function getAllData(callback) {
+  db.all(`SELECT * FROM data`, callback);
+}
 
 module.exports = {
   addData,
   addDescription,
   addImage,
   addDataVideo,
+  getAllData,
 };

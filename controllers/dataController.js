@@ -3,6 +3,7 @@ const {
   addDescription,
   addImage,
   addDataVideo,
+  getAllData,
 } = require("../models/dataModel");
 const { broadcast } = require("../webSocketServer");
 const { generateFileName } = require("../utils/fileHelper");
@@ -50,8 +51,16 @@ function addDataVideoHandler(req, res) {
     res.status(201).json({ message: "Data added table video successfully" });
   });
 }
+function getAllDataHandler(req, res) {
+  getAllData((err, rows) => {
+    if (err) return res.status(500).json({ message: err.message });
+    return res.status(201).json(rows);
+  });
+}
 
 module.exports = {
   addDataHandler,
   addDataVideoHandler,
+  getAllDataHandler,
+  getAllDataHandler,
 };
