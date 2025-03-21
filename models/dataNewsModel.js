@@ -1,8 +1,8 @@
 const { db } = require("../database");
 
-function addData(title, fileName, status, callback) {
+function addDataNews(title, fileName, status, callback) {
   db.run(
-    `INSERT INTO data (title, fileName, status, is_youtube) VALUES (?, ?, ?, FALSE)`,
+    `INSERT INTO data_generation_relax (title, fileName, status, is_youtube) VALUES (?, ?, ?, FALSE)`,
     [title, fileName, status],
     function (err) {
       if (err) {
@@ -59,7 +59,7 @@ function getAllData(callback) {
 }
 
 module.exports = {
-  addData,
+  addDataNews,
   addDescription,
   addImage,
   addDataVideo,

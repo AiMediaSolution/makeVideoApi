@@ -4,15 +4,12 @@ const {
   addImage,
   addDataVideo,
   getAllData,
-} = require("../models/dataModel");
+} = require("../models/dataNewsModel");
 const { broadcast } = require("../webSocketServer");
 const { generateFileName } = require("../utils/fileHelper");
-const { error } = require("console");
 function addDataHandler(req, res) {
-  console.log("dat toi day roi ne");
   const { title, status, description, imageUrl } = req.body;
   const fileName = generateFileName("file");
-  console.log("dat toi day roi ne", fileName);
   addData(title, fileName, status, (err, id) => {
     if (err) {
       return res.status(500).json({ error: err.message });

@@ -78,6 +78,30 @@ function initializeDatabase() {
         }
       }
     );
+    db.run(
+      `CREATE TABLE IF NOT EXISTS data_generation_relax (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          fileName TEXT NOT NULL,
+          title TEXT,
+          status TEXT,
+          is_youtube BOOLEAN DEFAULT FALSE,
+          image_url TEXT,
+          description TEXT,
+          video_id TEXT,
+          video_url TEXT, 
+          status_video TEXT
+        )`,
+      (err) => {
+        if (err) {
+          console.error(
+            "Error creating data generation relax table:",
+            err.message
+          );
+        } else {
+          console.log("Video table created or already exists.");
+        }
+      }
+    );
   });
 }
 

@@ -3,35 +3,39 @@ const rooms = {};
 
 const wss = new WebSocket.Server({ noServer: true });
 
-wss.on("connection", (ws) => {
-  const roomName = "generation";
-  if (!rooms[roomName]) {
-    rooms[roomName] = { clients: [], messages: [] };
-  }
-  rooms[roomName].clients.push(ws);
-  ws.room = roomName;
-
-  console.log(`Client joined room: ${roomName}`);
-
+wss.on("connection", (ws, req) => {
   ws.on("message", (message) => {
     const data = JSON.parse(message);
-    console.log("Broadcasting message...");
-    if (rooms[roomName]) {
-      rooms[roomName].clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
+    if (data.type === "join") {
+      const roomName = data.room;
+      if (!rooms[roomName]) {
+        rooms[roomName] = { clients: [] };
+      }
+
+      rooms[roomName].clients.push(ws);
+      ws.room = roomName;
+
+      console.log(`Client joined room: ${roomName}`);
+    }
+    if (data.type === "message" && ws.room) {
+      console.log(`Broadcasting message to ${ws.room}...`);
+      if (rooms[ws.room]) {
+        rooms[ws.room].clients.forEach((client) => {
+          if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(data));
+          }
+        });
+      }
     }
   });
 
   ws.on("close", () => {
-    if (rooms[roomName]) {
-      rooms[roomName].clients = rooms[roomName].clients.filter(
+    if (ws.room && rooms[ws.room]) {
+      rooms[ws.room].clients = rooms[ws.room].clients.filter(
         (client) => client !== ws
       );
-      if (rooms[roomName].clients.length === 0) {
-        delete rooms[roomName];
+      if (rooms[ws.room].clients.length === 0) {
+        delete rooms[ws.room];
       }
     }
     console.log("Client disconnected");
@@ -40,7 +44,7 @@ wss.on("connection", (ws) => {
 
 function broadcast(room, data) {
   if (!room || !rooms[room]) {
-    console.log(`Room ${room} non-existent or non-existent client.`);
+    console.log(`Room ${room} does not exist.`);
     return;
   }
   rooms[room].clients.forEach((client) => {

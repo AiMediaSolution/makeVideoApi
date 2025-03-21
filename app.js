@@ -22,10 +22,13 @@ server.on("upgrade", (request, socket, head) => {
   });
 });
 // Import routers
-const dataRouters = require("./routers/dataRouters");
-
+// router generation video in bbc is dataNewsRouter
+const dataNewsRouters = require("./routers/dataNewsRouters");
+// router generation video relax is dataRelaxRouter
+const dataRelaxRouters = require("./routers/dataRelaxRouter");
 // Use routers
-app.use("/data", dataRouters);
+// app.use("/dataNews", dataNewsRouters);
+app.use("/dataRelax", dataRelaxRouters);
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);
