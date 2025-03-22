@@ -6,11 +6,12 @@ function addDataRelax(
   status,
   image_url,
   description,
+  kling_prompt,
   callback
 ) {
   db.run(
-    `INSERT INTO data_generation_relax (fileName, title , status, is_youtube, image_url, description) VALUES (?, ?, ?, FALSE, ?, ?)`,
-    [fileName, title, status, image_url, description],
+    `INSERT INTO data_generation_relax (fileName, title, description, status, is_youtube_public, image_url, kling_prompt) VALUES (?, ?, ?, ?, FALSE, ?, ?)`,
+    [fileName, title, description, status, image_url, kling_prompt],
     function (err) {
       if (err) {
         return callback(err, null);
@@ -19,12 +20,45 @@ function addDataRelax(
     }
   );
 }
-function updateDataVideoRelax(id, video_id, video_url, status_video, callback) {
-  db.run(
-    `UPDATE data_generation_relax SET video_id = ? , video_url = ?, status_video = ?  WHERE id = ?`,
-    [video_id, video_url, status_video, id],
-    callback
-  );
+function updateDataVideoRelax(
+  id,
+  kling_task_id,
+  kling_video_url,
+  kling_status_video,
+  youtube_video_id,
+  callback
+) {
+  const fields = [];
+  const values = [];
+
+  if (kling_task_id !== undefined) {
+    fields.push("kling_task_id = ?");
+    values.push(kling_task_id);
+  }
+  if (kling_video_url !== undefined) {
+    fields.push("kling_video_url = ?");
+    values.push(kling_video_url);
+  }
+  if (kling_status_video !== undefined) {
+    fields.push("kling_status_video = ?");
+    values.push(kling_status_video);
+  }
+  if (youtube_video_id !== undefined) {
+    fields.push("youtube_video_id = ?");
+    values.push(youtube_video_id);
+  }
+
+  if (fields.length === 0) {
+    return callback(new Error("Không có dữ liệu để cập nhật"));
+  }
+
+  values.push(id);
+
+  const sql = `UPDATE data_generation_relax SET ${fields.join(
+    ", "
+  )} WHERE id = ?`;
+
+  db.run(sql, values, callback);
 }
 
 function updateStatusRelax(id, status, callback) {

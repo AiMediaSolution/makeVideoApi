@@ -10,35 +10,56 @@ const { broadcast } = require("../webSocketServer");
 const { generateFileName } = require("../utils/fileHelper");
 function addDataRelaxHandler(req, res) {
   const status = "pending";
-  const { title, image_url, description } = req.body;
+  const { title, image_url, description, kling_prompt } = req.body;
+  console.log(kling_prompt);
   const fileName = generateFileName("file");
-  addDataRelax(fileName, title, status, image_url, description, (err, id) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(201).json({ message: "Data added table video successfully" });
-    checkPendingData((err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-
-      if (rows === true) {
-        const dataB = { status: "none" };
-        broadcast("generationRelax", dataB);
+  addDataRelax(
+    fileName,
+    title,
+    status,
+    image_url,
+    description,
+    kling_prompt,
+    (err, id) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
       }
-      broadcast("generationRelax", rows);
-    });
-  });
+      res.status(201).json({ message: "Data added table video successfully" });
+      checkPendingData((err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (rows === true) {
+          const dataB = { status: "none" };
+          broadcast("generationRelax", dataB);
+        }
+        broadcast("generationRelax", rows);
+      });
+    }
+  );
 }
 function updateDataVideoRelaxHandler(req, res) {
   const { id } = req.params;
-  const { video_id, video_url, status_video } = req.body;
-  updateDataVideoRelax(id, video_id, video_url, status_video, (err) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+  const {
+    kling_task_id,
+    kling_video_url,
+    kling_status_video,
+    youtube_video_id,
+  } = req.body;
+  updateDataVideoRelax(
+    id,
+    kling_task_id,
+    kling_video_url,
+    kling_status_video,
+    youtube_video_id,
+    (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json({
+        message: "Update video data in data_generation_relax successfully",
+      });
     }
-    res.status(200).json({
-      message: "Update video data in data_generation_relax successfully",
-    });
-  });
+  );
 }
 function getAllDataRelaxHandler(req, res) {
   getAllDataRelax((err, rows) => {

@@ -83,13 +83,15 @@ function initializeDatabase() {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           fileName TEXT NOT NULL,
           title TEXT,
-          status TEXT,
-          is_youtube BOOLEAN DEFAULT FALSE,
-          image_url TEXT,
           description TEXT,
-          video_id TEXT,
-          video_url TEXT, 
-          status_video TEXT
+          status TEXT,
+          is_youtube_public BOOLEAN DEFAULT FALSE,
+          image_url TEXT,
+          kling_prompt TEXT,
+          kling_task_id TEXT,
+          kling_video_url TEXT, 
+          kling_status_video TEXT,
+          youtube_video_id TEXT
         )`,
       (err) => {
         if (err) {
